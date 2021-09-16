@@ -1,0 +1,59 @@
+##
+## This workflow builds ShaidyMapGen.jar and ngchmWidget-min.js
+## from the specified tag in the NGCHM Viewer project
+## (https://github.com/MD-Anderson-Bioinformatics/NG-CHM),
+## and sets the version number to that of the NGCHM Viewer tag
+## version. These changes are then committed back to this repo.
+##
+
+name: Build ShaidyMapGen.jar and ngchmWidget-min.js
+on:
+  push:
+    branches:
+      - action-for-build
+      - main
+jobs:
+  Build-ShaidyMapGen-and-ngchmWdiget-min:
+    runs-on: macOS-latest
+    env:
+      NGCHM_TAG: '2.20.3'
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Check out NGCHM Viewer $NGCHM_TAG 
+        uses: actions/checkout@v2
+        with:
+          repository: MD-Anderson-Bioinformatics/NG-CHM
+          ref: ${{env.NGCHM_TAG}}
+          path: './NGCHM'
+      - name: Set up JDK for java 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Build ShaidyMapGen.jar
+        run: |
+          cd NGCHM/NGCHM
+          ant -f build_shaidyRmapgen.xml
+      - name: Build ngchmWidget-min.js
+        run: |
+          cd NGCHM/NGCHM
+          ant -f build_ngchmApp.xml
+      - name: Update version number in DESCRIPTION
+        run: |
+          sed -i.bak '/Version:/d' DESCRIPTION
+          echo "Version: $NGCHM_TAG" >> DESCRIPTION
+      - name: Verify package builds
+        run: R CMD build .
+      - name: Commit ShaidyMapGen, ngchmWidget-min, and DESCRIPTION
+        run: |
+          cp NGCHM/NGCHM/ShaidyMapGen.jar inst/java/
+          cp NGCHM/NGCHM/ngchmWidget-min.js inst/js/
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add inst/java/ShaidyMapGen.jar
+          git add inst/js/ngchmWidget-min.js
+          git add DESCRIPTION
+          git commit -m "Build ShaidyMapGen, ngchmWidget-min for $NGCHM_TAG"
+          git push
+
