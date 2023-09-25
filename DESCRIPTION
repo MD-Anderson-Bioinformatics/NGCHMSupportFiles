@@ -9,7 +9,7 @@ Authors@R:
     person(given="Michael", family="Ryan", role=c("aut")),
     person(given="Futa", family="Ikeda", role=c("ctb")),
     person(given="MD Anderson Cancer Center", role=c("cph")))
-Description: Support files needed by the 'NGCHM' package for exporting Next-Generation Clustered Heat Maps (NG-CHMs) to .ngchm and .html files. These support files are updated mostly independently from the 'NGCHM' package, and are therefore provided separately. The package provides two support files: ShaidyMapGen.jar, used by chmExportToFile() and chmExportToHTML(), and ngchmWidget-min.js, used by chmExportToHTML().
+Description: Support files required by the 'NGCHM' package to export Next-Generation Clustered Heat Maps (NG-CHMs) to .ngchm, HTML, and PDF files. These support files are updated mostly independently from the 'NGCHM' package, and are therefore provided separately.
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
